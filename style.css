@@ -1150,6 +1150,52 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   border-radius: 12px;
 }
 
+/* ─── TOMORROW WARNING POPUP ─── */
+.tw-count-badge {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+.tw-count-badge span {
+  display: block;
+  font-size: 36px;
+  font-weight: 900;
+  color: #f59e0b;
+  line-height: 1.1;
+  margin: 4px 0;
+}
+
+.tw-count-badge small {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tw-btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.tw-btn {
+  flex: 1;
+  border: none;
+  padding: 14px 10px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.tw-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+.tw-btn-rest     { background: #ef4444; color: #fff; }
+.tw-btn-continue { background: var(--primary); color: var(--button-text); }
+
 /* ─── QUIZ GAME ─── */
 
 /* Quiz Word Visibility & Sound Controls */

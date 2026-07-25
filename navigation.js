@@ -476,20 +476,21 @@ function openSRSDue(){
   }
   const chunk = getDueChunk();
   if(chunk.length === 0){
-    const tomorrowDue = getTomorrowDueCount();
-    if(tomorrowDue >= MAX_TOMORROW_DUE){
-      alert("🎉 วันนี้เรียนเพียงพอแล้ว\n\nพรุ่งนี้มีคำที่ต้องทวนครบ 90 คำแล้ว\n\nพักผ่อน แล้วกลับมาทวนต่อวันพรุ่งนี้");
-    } else {
-      alert(getDueWords().length === 0
-        ? "✅ ไม่มีคำให้ทวนวันนี้แล้ว!"
-        : "✅ ทวนครบทุกคำแล้ว! กล่องคำผิดยังไม่เต็ม\nลองทวนคำผิดดูได้ครับ");
-    }
+    alert(getDueWords().length === 0
+      ? "✅ ไม่มีคำให้ทวนวันนี้แล้ว!"
+      : "✅ ทวนครบทุกคำแล้ว! กล่องคำผิดยังไม่เต็ม\nลองทวนคำผิดดูได้ครับ");
     return;
   }
   srsSessionWords   = chunk.map(i => ({ word: i.word, meaning: i.meaning }));
   srsSessionType    = "due";
   currentVocabulary = [...srsSessionWords];
-  startDueFlashcard();
+  // ตรวจภาระพรุ่งนี้ก่อนเริ่ม — แสดง Popup ถ้าเกิน MAX_TOMORROW_DUE
+  const tomorrowDue = getTomorrowDueCount();
+  if(tomorrowDue >= MAX_TOMORROW_DUE){
+    showTomorrowWarningPopup(startDueFlashcard, tomorrowDue);
+  } else {
+    startDueFlashcard();
+  }
 }
 
 function startDueFlashcard(){
@@ -819,17 +820,48 @@ function showSRSFinish(wrongList){
 function continueNextChunk(){
   if(isWrongBoxFull()){ goToSRSDashboard(); return; }
   const chunk = getDueChunk();
-  if(chunk.length === 0){
-    const tomorrowDue = getTomorrowDueCount();
-    if(tomorrowDue >= MAX_TOMORROW_DUE){
-      alert("🎉 วันนี้เรียนเพียงพอแล้ว\n\nพรุ่งนี้มีคำที่ต้องทวนครบ 90 คำแล้ว\n\nพักผ่อน แล้วกลับมาทวนต่อวันพรุ่งนี้");
-    }
-    goToSRSDashboard();
-    return;
-  }
+  if(chunk.length === 0){ goToSRSDashboard(); return; }
   srsSessionWords   = chunk.map(i => ({ word: i.word, meaning: i.meaning }));
   currentVocabulary = [...srsSessionWords];
-  startDueFlashcard();
+  // ตรวจภาระพรุ่งนี้ก่อนเริ่ม — แสดง Popup ถ้าเกิน MAX_TOMORROW_DUE
+  const tomorrowDue = getTomorrowDueCount();
+  if(tomorrowDue >= MAX_TOMORROW_DUE){
+    showTomorrowWarningPopup(startDueFlashcard, tomorrowDue);
+  } else {
+    startDueFlashcard();
+  }
+}
+
+// ============================================================
+// TOMORROW WARNING POPUP
+// ============================================================
+let _tomorrowWarningCallback = null;
+
+/**
+ * เปิด Popup แจ้งเตือนภาระพรุ่งนี้
+ * @param {Function} onContinue - callback ที่จะเรียกเมื่อผู้ใช้กด "เล่นต่อ"
+ * @param {number}   count      - จำนวนคำทวนพรุ่งนี้จาก getTomorrowDueCount()
+ */
+function showTomorrowWarningPopup(onContinue, count){
+  _tomorrowWarningCallback = null;  // clear ก่อนเสมอ (Defensive)
+  document.getElementById("tomorrowWarningCount").textContent = count;
+  _tomorrowWarningCallback = onContinue;
+  document.getElementById("tomorrowWarningPopup").classList.remove("hidden");
+}
+
+/** ผู้ใช้กด "เล่นต่อ" → ปิด Popup แล้วเริ่มเกม */
+function confirmTomorrowWarning(){
+  document.getElementById("tomorrowWarningPopup").classList.add("hidden");
+  const cb = _tomorrowWarningCallback;
+  _tomorrowWarningCallback = null;
+  if(cb) cb();
+}
+
+/** ผู้ใช้กด "พักก่อน" → ปิด Popup แล้วกลับ Dashboard */
+function cancelTomorrowWarning(){
+  document.getElementById("tomorrowWarningPopup").classList.add("hidden");
+  _tomorrowWarningCallback = null;
+  goToSRSDashboard();
 }
 
 // ============================================================

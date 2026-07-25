@@ -295,7 +295,29 @@
       </div>
     </div>
 
+    <!-- TOMORROW WARNING POPUP — ปิดได้เฉพาะปุ่ม "พักก่อน" หรือ "เล่นต่อ" เท่านั้น -->
+    <div id="tomorrowWarningPopup" class="stage2-overlay hidden">
+      <div class="stage2-sheet">
+        <div class="stage2-title">⚠️ ภาระพรุ่งนี้สูงแล้ว</div>
+        <div class="stage2-body">
+          <div class="tw-count-badge">
+            พรุ่งนี้มีคำที่ต้องทวน
+            <span id="tomorrowWarningCount">0</span>
+            <small>คำ</small>
+          </div>
+          <div class="stage2-desc">
+            แนะนำให้พักเพื่อไม่ให้ภาระสะสมมากเกินไป
+          </div>
+        </div>
+        <div class="tw-btn-row">
+          <button class="tw-btn tw-btn-rest" onclick="cancelTomorrowWarning()">🛌 พักก่อน</button>
+          <button class="tw-btn tw-btn-continue" onclick="confirmTomorrowWarning()">▶ เล่นต่อ</button>
+        </div>
+      </div>
+    </div>
+
     <!-- PRACTICE/WRONGBOX STAGE 2 POPUP -->
+
     <div id="stage2TransitionPopup" class="stage2-overlay hidden">
       <div class="stage2-sheet">
         <div class="stage2-title">🧠 เกมเติมคำ</div>
