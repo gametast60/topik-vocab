@@ -260,10 +260,6 @@ function renderHomeDueHub() {
       <div class="home-due-header-left">
        📅 ทวนวันนี้ <span class="home-due-date">${todayStr()}</span>
       </div>
-      <div class="home-due-header-right">
-        <span class="home-due-divider">|</span>
-        <button class="home-due-refresh-btn" onclick="triggerRefreshWithLoading()">🔄รีเฟรช</button>
-      </div>
     </div>
   `;
 
