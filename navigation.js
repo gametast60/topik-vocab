@@ -857,11 +857,10 @@ function confirmTomorrowWarning(){
   if(cb) cb();
 }
 
-/** ผู้ใช้กด "พักก่อน" → ปิด Popup แล้วกลับ Dashboard */
+/** ผู้ใช้กด "พักก่อน" → ปิด Popup */
 function cancelTomorrowWarning(){
   document.getElementById("tomorrowWarningPopup").classList.add("hidden");
   _tomorrowWarningCallback = null;
-  goToSRSDashboard();
 }
 
 // ============================================================
