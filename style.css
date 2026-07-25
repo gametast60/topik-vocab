@@ -734,6 +734,13 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
 }
 
+.srs-tomorrow-btn {
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+}
+.srs-tomorrow-btn:hover {
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+}
+
 .srs-wrongbox-btn {
   background: linear-gradient(135deg, #EF4444, #f87171);
 }
@@ -1680,6 +1687,19 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   box-shadow: 0 6px 14px -4px rgba(139, 92, 246, 0.5) !important;
 }
 .stat-chip-due b {
+  color: #ffffff !important;
+}
+
+.stat-chip-tomorrow {
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  border: 1.5px solid #38bdf8;
+  color: #FFFFFF;
+}
+.stat-chip-tomorrow:hover {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 6px 14px -4px rgba(14, 165, 233, 0.5) !important;
+}
+.stat-chip-tomorrow b {
   color: #ffffff !important;
 }
 

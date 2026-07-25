@@ -476,9 +476,14 @@ function openSRSDue(){
   }
   const chunk = getDueChunk();
   if(chunk.length === 0){
-    alert(getDueWords().length === 0
-      ? "✅ ไม่มีคำให้ทวนวันนี้แล้ว!"
-      : "✅ ทวนครบทุกคำแล้ว! กล่องคำผิดยังไม่เต็ม\nลองทวนคำผิดดูได้ครับ");
+    const tomorrowDue = getTomorrowDueCount();
+    if(tomorrowDue >= MAX_TOMORROW_DUE){
+      alert("🎉 วันนี้เรียนเพียงพอแล้ว\n\nพรุ่งนี้มีคำที่ต้องทวนครบ 90 คำแล้ว\n\nพักผ่อน แล้วกลับมาทวนต่อวันพรุ่งนี้");
+    } else {
+      alert(getDueWords().length === 0
+        ? "✅ ไม่มีคำให้ทวนวันนี้แล้ว!"
+        : "✅ ทวนครบทุกคำแล้ว! กล่องคำผิดยังไม่เต็ม\nลองทวนคำผิดดูได้ครับ");
+    }
     return;
   }
   srsSessionWords   = chunk.map(i => ({ word: i.word, meaning: i.meaning }));
@@ -814,7 +819,14 @@ function showSRSFinish(wrongList){
 function continueNextChunk(){
   if(isWrongBoxFull()){ goToSRSDashboard(); return; }
   const chunk = getDueChunk();
-  if(chunk.length === 0){ goToSRSDashboard(); return; }
+  if(chunk.length === 0){
+    const tomorrowDue = getTomorrowDueCount();
+    if(tomorrowDue >= MAX_TOMORROW_DUE){
+      alert("🎉 วันนี้เรียนเพียงพอแล้ว\n\nพรุ่งนี้มีคำที่ต้องทวนครบ 90 คำแล้ว\n\nพักผ่อน แล้วกลับมาทวนต่อวันพรุ่งนี้");
+    }
+    goToSRSDashboard();
+    return;
+  }
   srsSessionWords   = chunk.map(i => ({ word: i.word, meaning: i.meaning }));
   currentVocabulary = [...srsSessionWords];
   startDueFlashcard();
@@ -846,6 +858,7 @@ function openSRSStats(){
   const pct   = stats.total > 0 ? Math.round((stats.learned / stats.total) * 100) : 0;
   const label = currentTopik === "topik1" ? "TOPIK 1" : "TOPIK 2";
   const wb    = getWrongBoxWords();
+  const tomorrowDue = getTomorrowDueCount();
 
   document.getElementById("srsStatsContent").innerHTML = `
     <div class="stats-header">📊 สถิติ ${label}</div>
@@ -854,6 +867,7 @@ function openSRSStats(){
       <div class="stat-chip">เรียนไปแล้ว<br><b>${stats.learned}</b></div>
       <div class="stat-chip">จำได้แล้ว ✅<br><b>${stats.mastered}</b></div>
       <div class="stat-chip stat-chip-due" style="cursor:pointer" onclick="openDueTodayInspector()">ทวนวันนี้<br><b>${stats.dueToday}</b></div>
+      <div class="stat-chip stat-chip-tomorrow" style="cursor:pointer" onclick="openTomorrowDueInspector()">ทวนพรุ่งนี้<br><b>${tomorrowDue}</b></div>
       <div class="stat-chip">❌คำผิดวันนี้<br><b>${wb.length}/${WRONG_BOX_MAX}</b></div>
     </div>
     <div class="stat-progress-label">ความคืบหน้า ${pct}%</div>
@@ -1622,6 +1636,67 @@ function openDueTodayInspector(){
 
   document.getElementById("boxInspectorTitle").textContent = `📅 ทวนวันนี้ (${words.length} คำ)`;
   document.getElementById("boxInspectorTitle").style.color = "#FACC15";
+  document.getElementById("boxInspectorList").innerHTML = listHtml;
+  document.getElementById("boxInspectorModal").classList.remove("hidden");
+}
+
+function openTomorrowDueInspector(){
+  const data = loadSRS();
+  const today = todayStr();
+  const tomorrow = addDays(today, 1);
+  const items = Object.values(data);
+
+  // 1. Box 1-4 ที่ nextReview == tomorrow
+  const box1to4Words = items.filter(item => {
+    let box = (item.box === undefined || item.box === null) ? 0 : Number(item.box);
+    return box >= 1 && box <= 4 && item.nextReview === tomorrow;
+  });
+
+  // 2. Box 5 ของวันพรุ่งนี้ ตาม Logic ของ processDailyBox5Queue
+  const box5RealDue = items.filter(item =>
+    Number(item.box) === 5 && item.nextReview && item.nextReview <= tomorrow
+  );
+
+  let box5Words = [];
+  if (box5RealDue.length >= BOX5_CHUNK_SIZE) {
+    box5Words = box5RealDue;
+  } else {
+    const candidates = items.filter(item =>
+      Number(item.box) === 5 &&
+      (!item.nextReview || item.nextReview > tomorrow)
+    );
+    const needed = BOX5_CHUNK_SIZE - box5RealDue.length;
+    const borrowed = candidates.slice(0, needed);
+    box5Words = [...box5RealDue, ...borrowed];
+  }
+
+  const allWords = [...box1to4Words, ...box5Words].sort((a, b) => {
+    let boxA = Number(a.box);
+    let boxB = Number(b.box);
+    if (boxA !== boxB) return boxA - boxB;
+    return (a.word || "").localeCompare(b.word || "");
+  });
+
+  let listHtml = "";
+  if(allWords.length === 0){
+    listHtml = `<div class="box-inspector-empty">ไม่มีคำให้ทวนวันพรุ่งนี้</div>`;
+  } else {
+    allWords.forEach((item, i) => {
+      const isBorrowed = Number(item.box) === 5 && (!item.nextReview || item.nextReview > tomorrow);
+      const tag = isBorrowed
+        ? `<span class="box-inspector-date" style="background:rgba(14,165,233,0.2);color:#38bdf8">กล่อง 5 (ยืม)</span>`
+        : `<span class="box-inspector-date">กล่อง ${item.box}</span>`;
+      listHtml += `<div class="box-inspector-item">
+        <span class="box-inspector-num">${i+1}.</span>
+        <span class="box-inspector-word">${item.word}</span>
+        <span class="box-inspector-meaning">${item.meaning}</span>
+        ${tag}
+      </div>`;
+    });
+  }
+
+  document.getElementById("boxInspectorTitle").textContent = `📅 ทวนพรุ่งนี้ (${allWords.length} คำ)`;
+  document.getElementById("boxInspectorTitle").style.color = "#38bdf8";
   document.getElementById("boxInspectorList").innerHTML = listHtml;
   document.getElementById("boxInspectorModal").classList.remove("hidden");
 }

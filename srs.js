@@ -3,6 +3,8 @@ const SRS_DATE      = "topik_srs_date";
 const BOX_INTERVALS  = [0, 1, 3, 7, 14, Infinity];
 const BOX5_CHUNK_SIZE = 30;   // คำ/วัน จากกล่อง 5
 const BOX5_INTERVAL   = 30;   // วันก่อนทวนซ้ำหลังตอบถูก
+const MAX_TOMORROW_DUE = 90;   // ลิมิตภาระการทวนของวันพรุ่งนี้
+
 
 // key สำหรับ settings แยกตาม topik
 function srsSettingsKey() {
@@ -308,6 +310,38 @@ function getDueWords() {
   });
 }
 
+function getTomorrowDueCount() {
+  const data = loadSRS();
+  const today = todayStr();
+  const tomorrow = addDays(today, 1);
+  const items = Object.values(data);
+
+  // 1. Box 1-4 ที่ nextReview == tomorrow
+  const box1to4Tomorrow = items.filter(item => {
+    let box = (item.box === undefined || item.box === null) ? 0 : Number(item.box);
+    return box >= 1 && box <= 4 && item.nextReview === tomorrow;
+  }).length;
+
+  // 2. Box 5 ของวันพรุ่งนี้ ตาม Logic ของ processDailyBox5Queue
+  const box5RealDueTomorrow = items.filter(item =>
+    Number(item.box) === 5 && item.nextReview && item.nextReview <= tomorrow
+  ).length;
+
+  let box5TomorrowCount = 0;
+  if (box5RealDueTomorrow >= BOX5_CHUNK_SIZE) {
+    box5TomorrowCount = box5RealDueTomorrow;
+  } else {
+    const candidatesTomorrow = items.filter(item =>
+      Number(item.box) === 5 &&
+      (!item.nextReview || item.nextReview > tomorrow)
+    ).length;
+    const needed = BOX5_CHUNK_SIZE - box5RealDueTomorrow;
+    box5TomorrowCount = box5RealDueTomorrow + Math.min(needed, candidatesTomorrow);
+  }
+
+  return box1to4Tomorrow + box5TomorrowCount;
+}
+
 function getDueChunk() {
   const data  = loadSRS();
   const today = todayStr();
@@ -321,12 +355,18 @@ function getDueChunk() {
 
   const newWords = all.filter(item => item.box === 0);
 
+  const spaceLeft = limit - due.length;
+  const tomorrowDue = getTomorrowDueCount();
+  const allowedBox0 = spaceLeft > 0
+    ? Math.max(0, Math.min(spaceLeft, MAX_TOMORROW_DUE - tomorrowDue))
+    : 0;
+
   const combined = [
     ...shuffleArray(due),
-    ...shuffleArray(newWords),
+    ...shuffleArray(newWords).slice(0, allowedBox0),
   ];
 
-  return combined.slice(0, limit);
+  return combined;
 }
 
 function recordAnswer(word, correct) {
