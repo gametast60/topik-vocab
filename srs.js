@@ -3,7 +3,7 @@ const SRS_DATE      = "topik_srs_date";
 const BOX_INTERVALS  = [0, 1, 3, 7, 14, Infinity];
 const BOX5_CHUNK_SIZE = 30;   // คำ/วัน จากกล่อง 5
 const BOX5_INTERVAL   = 30;   // วันก่อนทวนซ้ำหลังตอบถูก
-const MAX_TOMORROW_DUE = 90;   // ลิมิตภาระการทวนของวันพรุ่งนี้
+const TOMORROW_WARNING_THRESHOLD = 90;   // เกณฑ์แจ้งเตือนภาระการทวนของวันพรุ่งนี้ (Soft Limit)
 
 
 // key สำหรับ settings แยกตาม topik
@@ -367,7 +367,7 @@ function getDueChunk() {
   const spaceLeft = limit - dueChunk.length;
   const tomorrowDue = getTomorrowDueCount();
   const allowedBox0 = spaceLeft > 0
-    ? Math.max(0, Math.min(spaceLeft, MAX_TOMORROW_DUE - tomorrowDue))
+    ? Math.max(0, Math.min(spaceLeft, TOMORROW_WARNING_THRESHOLD - tomorrowDue))
     : 0;
 
   // ③ combined ไม่เกิน limit แน่นอน

@@ -484,9 +484,9 @@ function openSRSDue(){
   srsSessionWords   = chunk.map(i => ({ word: i.word, meaning: i.meaning }));
   srsSessionType    = "due";
   currentVocabulary = [...srsSessionWords];
-  // ตรวจภาระพรุ่งนี้ก่อนเริ่ม — แสดง Popup ถ้าเกิน MAX_TOMORROW_DUE
+  // ตรวจภาระพรุ่งนี้ก่อนเริ่ม — แสดง Popup ถ้าเกิน TOMORROW_WARNING_THRESHOLD
   const tomorrowDue = getTomorrowDueCount();
-  if(tomorrowDue >= MAX_TOMORROW_DUE){
+  if(tomorrowDue >= TOMORROW_WARNING_THRESHOLD){
     showTomorrowWarningPopup(startDueFlashcard, tomorrowDue);
   } else {
     startDueFlashcard();
@@ -823,9 +823,9 @@ function continueNextChunk(){
   if(chunk.length === 0){ goToSRSDashboard(); return; }
   srsSessionWords   = chunk.map(i => ({ word: i.word, meaning: i.meaning }));
   currentVocabulary = [...srsSessionWords];
-  // ตรวจภาระพรุ่งนี้ก่อนเริ่ม — แสดง Popup ถ้าเกิน MAX_TOMORROW_DUE
+  // ตรวจภาระพรุ่งนี้ก่อนเริ่ม — แสดง Popup ถ้าเกิน TOMORROW_WARNING_THRESHOLD
   const tomorrowDue = getTomorrowDueCount();
-  if(tomorrowDue >= MAX_TOMORROW_DUE){
+  if(tomorrowDue >= TOMORROW_WARNING_THRESHOLD){
     showTomorrowWarningPopup(startDueFlashcard, tomorrowDue);
   } else {
     startDueFlashcard();
