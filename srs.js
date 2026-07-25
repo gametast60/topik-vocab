@@ -322,18 +322,23 @@ function getTomorrowDueCount() {
     return box >= 1 && box <= 4 && item.nextReview === tomorrow;
   }).length;
 
-  // 2. Box 5 ของวันพรุ่งนี้ ตาม Logic ของ processDailyBox5Queue
+  // 2. Box 5 ของวันพรุ่งนี้ — Mirror Logic ของ processDailyBox5Queue() ทุกบรรทัด
+  //    realDue = box5 ที่ nextReview <= tomorrow (เลยกำหนดแล้ว)
   const box5RealDueTomorrow = items.filter(item =>
     Number(item.box) === 5 && item.nextReview && item.nextReview <= tomorrow
   ).length;
 
   let box5TomorrowCount = 0;
   if (box5RealDueTomorrow >= BOX5_CHUNK_SIZE) {
+    // มี due มากกว่า quota อยู่แล้ว ไม่ต้องยืมเพิ่ม
     box5TomorrowCount = box5RealDueTomorrow;
   } else {
+    // candidates = box5 ที่ยังไม่ due พรุ่งนี้ และไม่มี borrowedFor === tomorrow
+    // (Mirror เงื่อนไขของ Scheduler ครบถ้วน รวมถึง borrowedFor check)
     const candidatesTomorrow = items.filter(item =>
       Number(item.box) === 5 &&
-      (!item.nextReview || item.nextReview > tomorrow)
+      (!item.borrowedFor || item.borrowedFor !== tomorrow) &&
+      (item.nextReview === null || item.nextReview === undefined || item.nextReview > tomorrow)
     ).length;
     const needed = BOX5_CHUNK_SIZE - box5RealDueTomorrow;
     box5TomorrowCount = box5RealDueTomorrow + Math.min(needed, candidatesTomorrow);
@@ -355,18 +360,21 @@ function getDueChunk() {
 
   const newWords = all.filter(item => item.box === 0);
 
-  const spaceLeft = limit - due.length;
+  // ① slice due ตาม limit (restore พฤติกรรมเดิม: Due > limit → แบ่งเป็นหลายชุด)
+  const dueChunk = shuffleArray(due).slice(0, limit);
+
+  // ② คำนวณโควตา Box0 จากช่องที่เหลือหลัง due และตรวจ Tomorrow Due
+  const spaceLeft = limit - dueChunk.length;
   const tomorrowDue = getTomorrowDueCount();
   const allowedBox0 = spaceLeft > 0
     ? Math.max(0, Math.min(spaceLeft, MAX_TOMORROW_DUE - tomorrowDue))
     : 0;
 
-  const combined = [
-    ...shuffleArray(due),
+  // ③ combined ไม่เกิน limit แน่นอน
+  return [
+    ...dueChunk,
     ...shuffleArray(newWords).slice(0, allowedBox0),
   ];
-
-  return combined;
 }
 
 function recordAnswer(word, correct) {
