@@ -417,7 +417,7 @@ function renderSRSHome(){
   const wrongBox = getWrongBoxWords();
 
   const BOX_LABELS = ["ใหม่","1วัน","3วัน","7วัน","14วัน","จำได้✅"];
-  const BOX_COLORS = ["#6b7280","#3b82f6","#8b5cf6","#f59e0b","#ef4444","#16a34a"];
+  const BOX_COLORS = ["#6B7280","#3B82F6","#7C8CFF","#F5C242","#FB7185","#34D8C4"];
 
   const boxRow = document.getElementById("srsBoxRow");
   if(!boxRow) return;
@@ -457,6 +457,9 @@ function renderSRSHome(){
     <div class="srs-action-row">
       <button class="srs-action-btn srs-stat-btn" onclick="openSRSStats()">📊 สถิติ</button>
       <button class="srs-action-btn srs-settings-btn" onclick="openSettings()">⚙️ ตั้งค่า</button>
+    </div>
+    <div class="srs-action-row single">
+      <button class="srs-action-btn" style="background:linear-gradient(135deg,#8B5CF6,#EC4899);" onclick="openInsights()">✨ ภาพรวม</button>
     </div>`;
 }
 
@@ -665,7 +668,7 @@ function openPracticeBoxModal(){
     "กล่อง 4 — 14 วัน",
     "กล่อง 5 — จำได้ ✅"
   ];
-  const BOX_COLORS = ["#6b7280","#3b82f6","#8b5cf6","#d97706","#ef4444","#16a34a","#db2777"];
+  const BOX_COLORS = ["#6B7280","#3B82F6","#7C8CFF","#F5C242","#FB7185","#34D8C4","#EC4899"];
 
   let html = "";
   for(let i = 0; i <= 5; i++){
@@ -2339,5 +2342,63 @@ function showFlashcardExample() {
   }
   if (word) {
     showExamplePopup(word, typeof currentTopik !== "undefined" ? currentTopik : "");
+  }
+}
+
+// ============================================================
+// CONSTELLATION INSIGHTS PAGE (Option B — getSRSStats() only)
+// ============================================================
+function openInsights() {
+  hideAllScreens();
+  document.getElementById("insightsScreen").classList.remove("hidden");
+  document.getElementById("homeButton").classList.remove("hidden");
+  renderInsights();
+}
+
+function renderInsights() {
+  if (typeof getSRSStats !== "function") return;
+  const stats = getSRSStats();
+  if (!stats) return;
+
+  const total    = stats.total    || 0;
+  const learned  = stats.learned  || 0;
+  const mastered = stats.mastered || 0;
+  const dueToday = stats.dueToday || 0;
+  const newLeft  = stats.newLeft  || 0;
+
+  // Wrong box count (safe fallback)
+  const wrongCount = (typeof getWrongBoxWords === "function") ? getWrongBoxWords().length : 0;
+
+  const cards = [
+    { cls:"insights-card-total",    icon:"📚", num:total,    label:"คำทั้งหมด"    },
+    { cls:"insights-card-learned",  icon:"🧠", num:learned,  label:"เรียนแล้ว"   },
+    { cls:"insights-card-mastered", icon:"✅", num:mastered, label:"จำได้แล้ว"   },
+    { cls:"insights-card-due",      icon:"📅", num:dueToday, label:"ต้องทวนวันนี้" },
+    { cls:"insights-card-new",      icon:"🌱", num:newLeft,  label:"คำใหม่เหลือ"  },
+    { cls:"insights-card-wrong",    icon:"❌", num:wrongCount,label:"กล่องคำผิด"  },
+  ];
+
+  const grid = document.getElementById("insightsGrid");
+  if (grid) {
+    grid.innerHTML = cards.map(c => `
+      <div class="insights-card ${c.cls}">
+        <div class="insights-card-icon">${c.icon}</div>
+        <div class="insights-card-num">${c.num}</div>
+        <div class="insights-card-label">${c.label}</div>
+      </div>`).join("");
+  }
+
+  // Progress bar: mastered / total
+  const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+  const wrap = document.getElementById("insightsProgressWrap");
+  if (wrap) {
+    wrap.innerHTML = `
+      <div class="insights-progress-label">
+        <span>ความคืบหน้า</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="insights-progress-bar">
+        <div class="insights-progress-fill" style="width:${pct}%"></div>
+      </div>`;
   }
 }

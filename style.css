@@ -3,35 +3,38 @@
    ========================================================================== */
 
 /* ─── GOOGLE FONTS ─── */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --font-sans: 'Prompt', 'Noto Sans Thai', sans-serif;
   --font-mono: 'Outfit', sans-serif;
+  --font-display: 'Baloo 2', 'Prompt', sans-serif;
 
-  /* ─── COLOR SYSTEM (DARK MODE PREMIUM) ─── */
-  --bg-app: radial-gradient(circle at 50% 50%, #1E1E1E 0%, #121212 100%);
-  --card-bg: #252525;
-  --card-border: 1px solid #2d2d2d;
+  /* ─── COLOR SYSTEM (CONSTELLATION DARK) ─── */
+  --bg-app: radial-gradient(circle at 30% 0%, #1A1526 0%, #100D18 60%);
+  --card-bg: #1E1929;
+  --card-border: 1px solid #352C47;
   --card-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
 
   --primary: #8B5CF6;
   --primary-hover: #A78BFA;
-  --primary-light: #2D2D2D;
+  --primary-light: rgba(139, 92, 246, 0.12);
+  --gradient-primary: linear-gradient(135deg, #8B5CF6, #EC4899);
 
-  --korean-color: #A78BFA;
+  --korean-color: #7C8CFF;
+  --english-color: #34D8C4;
 
-  --success: #22C55E;
-  --success-hover: #16a34a;
-  --success-light: rgba(34, 197, 94, 0.15);
+  --success: #34D8C4;
+  --success-hover: #2BC4B0;
+  --success-light: rgba(52, 216, 196, 0.15);
 
-  --danger: #EF4444;
-  --danger-hover: #dc2626;
-  --danger-light: rgba(239, 68, 68, 0.15);
+  --danger: #FB7185;
+  --danger-hover: #F43F5E;
+  --danger-light: rgba(251, 113, 133, 0.15);
 
-  --warning: #EAB308;
+  --warning: #F5C242;
   --warning-hover: #FACC15;
-  --warning-light: rgba(234, 179, 8, 0.15);
+  --warning-light: rgba(245, 194, 66, 0.15);
 
   /* Theme System Precaution Variables */
   --text-primary: #FFFFFF;
@@ -42,12 +45,12 @@
   --text-main: var(--text-primary);
   --text-muted: var(--text-secondary);
   --text-light: #707070;
-  --border-light: #3a3a3a;
+  --border-light: #352C47;
 
   --button-text: var(--color-white);
   --button-bg: var(--primary);
-  --card-bg-white: #303030;
-  --input-bg-white: #2d2d2d;
+  --card-bg-white: #261F33;
+  --input-bg-white: #1C1728;
 }
 
 /* ─── BASE STYLES ─── */
@@ -256,19 +259,19 @@ button:disabled {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* ─── APP TITLE BADGE ─── */
 .app-title-badge {
   display: inline-flex;
   font-size: 16px;
   font-weight: 800;
-  color: #FACC15;
-  background: rgba(234, 179, 8, 0.1);
-  border: 1px solid rgba(234, 179, 8, 0.3);
+  font-family: var(--font-display);
+  color: var(--warning);
+  background: rgba(245, 194, 66, 0.1);
+  border: 1px solid rgba(245, 194, 66, 0.3);
   border-radius: 999px;
   padding: 6px 18px;
   margin: 0 auto 24px;
   align-self: center;
-  box-shadow: 0 2px 10px rgba(234, 179, 8, 0.05);
+  box-shadow: 0 2px 10px rgba(245, 194, 66, 0.05);
 }
 
 /* ─── TOP NAVIGATION BUTTONS ─── */
@@ -309,15 +312,15 @@ button:disabled {
 /* ─── PROGRESS BADGES ─── */
 .progress-badge {
   display: inline-flex;
-  background: linear-gradient(135deg, #EAB308, #FACC15);
+  background: linear-gradient(135deg, var(--warning), var(--warning-hover));
   color: #121212;
   font-size: 12px;
   font-weight: 800;
+  font-family: var(--font-display);
   padding: 6px 14px;
   border-radius: 999px;
   margin: 0 auto 16px;
-  box-shadow: 0 4px 10px rgba(234, 179, 8, 0.2);
-  font-family: var(--font-mono);
+  box-shadow: 0 4px 10px rgba(245, 194, 66, 0.2);
 }
 
 .progress-badge.stage2 {
@@ -369,25 +372,25 @@ button:disabled {
 /* Color styles for specific chips when active */
 #searchFilterChipAll:has(input:checked),
 #searchFilterChipAll.active {
-  background: #FACC15;
-  border-color: #FACC15;
+  background: var(--warning);
+  border-color: var(--warning);
   color: #000000;
-  box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 194, 66, 0.3);
 }
 
 #searchFilterChipAll:has(input:checked):hover,
 #searchFilterChipAll.active:hover {
-  background: #EAB308;
-  border-color: #EAB308;
+  background: var(--warning-hover);
+  border-color: var(--warning-hover);
   color: #000000;
 }
 
 #searchFilterChipKR:has(input:checked),
 #searchFilterChipKR.active {
-  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+  background: linear-gradient(135deg, var(--primary), var(--korean-color));
   border-color: transparent;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(124, 140, 255, 0.3);
 }
 
 #searchFilterChipKR:has(input:checked):hover,
@@ -398,16 +401,16 @@ button:disabled {
 
 #searchFilterChipEN:has(input:checked),
 #searchFilterChipEN.active {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  background: linear-gradient(135deg, var(--english-color), var(--success-hover));
   border-color: transparent;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(52, 216, 196, 0.3);
 }
 
 #searchFilterChipEN:has(input:checked):hover,
 #searchFilterChipEN.active:hover {
   filter: brightness(1.1);
-  color: #ffffff;
+  color: #000000;
 }
 
 .search-filter-chip:hover {
@@ -525,9 +528,9 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   flex: 1;
   font-size: 15px;
   font-weight: 700;
-  color: #FACC15;
-  background: rgba(234, 179, 8, 0.1);
-  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: var(--warning);
+  background: rgba(245, 194, 66, 0.1);
+  border: 1px solid rgba(245, 194, 66, 0.3);
   border-radius: 10px;
   padding: 6px 12px;
   word-break: break-word;
@@ -616,7 +619,7 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   font-size: 20px;
   font-weight: 800;
   color: var(--box-color);
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   line-height: 1.1;
 }
 
@@ -648,7 +651,7 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   font-weight: 800;
   padding: 2px 6px;
   border-radius: 999px;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 10px rgba(251, 113, 133, 0.4);
   animation: pulse 1.5s infinite;
 }
 
@@ -728,10 +731,10 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 }
 
 .srs-due-btn {
-  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+  background: var(--gradient-primary);
 }
 .srs-due-btn:hover {
-  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
 }
 
 .srs-tomorrow-btn {
@@ -742,10 +745,10 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 }
 
 .srs-wrongbox-btn {
-  background: linear-gradient(135deg, #EF4444, #f87171);
+  background: linear-gradient(135deg, var(--danger), var(--danger-hover));
 }
 .srs-wrongbox-btn:hover:not(:disabled) {
-  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 8px 20px rgba(251, 113, 133, 0.35);
 }
 
 .srs-new-btn {
@@ -862,11 +865,11 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 }
 
 .flashcard-front {
-  background: linear-gradient(135deg, #303030, #252525);
+  background: linear-gradient(135deg, #261F33, #1E1929);
 }
 
 .flashcard-back {
-  background: linear-gradient(135deg, #303030, #252525);
+  background: linear-gradient(135deg, #261F33, #1E1929);
   transform: rotateY(180deg);
 
   justify-content: flex-start;
@@ -896,7 +899,8 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 .fc-word {
   font-size: 38px;
   font-weight: 800;
-  color: #FACC15;
+  font-family: var(--font-display);
+  color: var(--warning);
   margin-bottom: 24px;
   letter-spacing: -0.5px;
   word-break: break-word;
@@ -995,7 +999,7 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 #fillCardUI .fc-meaning {
   font-size: 26px;
   font-weight: 800;
-  color: #FACC15;
+  color: var(--warning);
   margin: 0 auto 20px;
   background: transparent;
   padding: 0;
@@ -1005,7 +1009,7 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 .meaning {
   font-size: 26px;
   font-weight: 800;
-  color: #FACC15;
+  color: var(--warning);
   margin-bottom: 20px;
 }
 
@@ -1162,7 +1166,8 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   display: block;
   font-size: 36px;
   font-weight: 900;
-  color: #f59e0b;
+  font-family: var(--font-display);
+  color: var(--warning);
   line-height: 1.1;
   margin: 4px 0;
 }
@@ -1273,7 +1278,8 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 #quizGame .word {
   font-size: 36px;
   font-weight: 800;
-  color: #FACC15;
+  font-family: var(--font-display);
+  color: var(--warning);
   margin-bottom: 16px;
 }
 
@@ -1322,6 +1328,7 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 /* ─── FINISH SCREEN & SUMMARIES ─── */
 .finish {
   font-size: 28px;
+  font-family: var(--font-display);
   color: var(--success);
   font-weight: 800;
   margin-bottom: 20px;
@@ -1752,8 +1759,8 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 .stat-chip b {
   display: block;
   font-size: 20px;
+  font-family: var(--font-display);
   color: var(--primary);
-  font-family: var(--font-mono);
   margin-top: 4px;
 }
 
@@ -1995,12 +2002,12 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 .home-due-count {
   font-size: 14px;
   font-weight: 800;
-  color: #FACC15;
-  background: rgba(234, 179, 8, 0.12);
-  border: 1.5px solid rgba(234, 179, 8, 0.25);
+  color: var(--warning);
+  background: rgba(245, 194, 66, 0.12);
+  border: 1.5px solid rgba(245, 194, 66, 0.25);
   padding: 2px 10px;
   border-radius: 999px;
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   margin-left: 6px;
 }
 
@@ -2104,7 +2111,7 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   box-shadow: 0 8px 20px rgba(107, 114, 128, 0.3);
 }
 .next-chunk-btn {
-  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+  background: var(--gradient-primary);
 }
 .practice-box-select-btn{
   background: linear-gradient(135deg, #6b7280, #4b5563);
@@ -2139,13 +2146,23 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   width: auto;
   cursor:pointer;
 }
+
+/* Override: Korean button → gradient-primary (purple→pink CTA) */
 .home-kr-btn {
-  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+  background: var(--gradient-primary);
   color: white;
 }
+.home-kr-btn:hover {
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+}
+
+/* Override: English button → english-color (teal) */
 .home-en-btn {
-  background: linear-gradient(135deg, #06b6d4, #0891b2);
-  color: white;
+  background: linear-gradient(135deg, var(--english-color), var(--success-hover));
+  color: #000000;
+}
+.home-en-btn:hover {
+  box-shadow: 0 8px 20px rgba(52, 216, 196, 0.35);
 }
  
 
@@ -2193,7 +2210,7 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 
 .new-day-text{
   font-size: .95rem;
-  color: #ef4444;
+  color: var(--text-main);
   line-height: 1.6;
   margin-bottom: 24px;
 }
@@ -2652,4 +2669,201 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 
 .search-add-notfound-btn:active {
   transform: scale(0.97);
+}
+
+/* ============================================================
+   CONSTELLATION — CARD-STACK DEPTH EFFECT
+   Wrapper is purely cosmetic. JS targets #flashcardContainer
+   directly and is unaffected by this outer wrapper.
+   ============================================================ */
+
+.fc-stack-wrapper {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  margin: 16px 0 24px;
+}
+
+/* Move margin control from #flashcardContainer to wrapper */
+#flashcardContainer {
+  margin: 0;
+  position: relative;
+  z-index: 3;
+  height: 100%;
+}
+
+.fc-stack-ghost {
+  position: absolute;
+  left: 50%;
+  height: 100%;
+  border-radius: 24px;
+  border: 1px solid var(--border-light);
+  background: var(--card-bg-white);
+  pointer-events: none;
+}
+
+.fc-stack-ghost-1 {
+  width: calc(100% - 20px);
+  bottom: -8px;
+  transform: translateX(-50%);
+  opacity: 0.5;
+  z-index: 2;
+}
+
+.fc-stack-ghost-2 {
+  width: calc(100% - 40px);
+  bottom: -16px;
+  transform: translateX(-50%);
+  opacity: 0.25;
+  z-index: 1;
+}
+
+/* ============================================================
+   CONSTELLATION — KOREAN/ENGLISH LEVEL MENU BUTTON UPDATES
+   ============================================================ */
+
+/* Korean TOPIK buttons */
+.topik-1-btn {
+  background: linear-gradient(135deg, var(--korean-color), #6366f1);
+}
+.topik-1-btn:hover {
+  box-shadow: 0 8px 20px rgba(124, 140, 255, 0.35);
+}
+
+.topik-2-btn {
+  background: linear-gradient(135deg, var(--danger), var(--danger-hover));
+}
+.topik-2-btn:hover {
+  box-shadow: 0 8px 20px rgba(251, 113, 133, 0.35);
+}
+
+/* English level buttons */
+.english-a1-btn { background: linear-gradient(135deg, var(--english-color), var(--success-hover)); }
+.english-a2-btn { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+.english-b1-btn { background: linear-gradient(135deg, var(--primary), #7c3aed); }
+.english-b2-btn { background: linear-gradient(135deg, #EC4899, #d946ef); }
+
+.english-a1-btn:hover, .english-a2-btn:hover, .english-b1-btn:hover, .english-b2-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* english-a1 has dark text (light teal bg) */
+.english-a1-btn { color: #000000; }
+
+/* ============================================================
+   CONSTELLATION — INSIGHTS PAGE (Option B)
+   Uses only getSRSStats() data — no streak tracking needed
+   ============================================================ */
+
+.insights-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 0 4px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.insights-screen::-webkit-scrollbar { display: none; }
+
+.insights-title {
+  font-size: 20px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--text-main);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.insights-card {
+  background: var(--card-bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.insights-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.insights-card-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.insights-card-num {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  line-height: 1.1;
+}
+
+.insights-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Color variants */
+.insights-card-total    .insights-card-num { color: var(--text-main); }
+.insights-card-learned  .insights-card-num { color: var(--primary); }
+.insights-card-mastered .insights-card-num { color: var(--success); }
+.insights-card-due      .insights-card-num { color: var(--warning); }
+.insights-card-new      .insights-card-num { color: #3b82f6; }
+.insights-card-wrong    .insights-card-num { color: var(--danger); }
+
+.insights-card-mastered { 
+  border-color: rgba(52, 216, 196, 0.3);
+  background: color-mix(in srgb, var(--success) 8%, var(--card-bg-white));
+}
+.insights-card-due {
+  border-color: rgba(245, 194, 66, 0.3);
+  background: color-mix(in srgb, var(--warning) 8%, var(--card-bg-white));
+}
+
+.insights-progress-wrap {
+  background: var(--card-bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+
+.insights-progress-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.insights-progress-bar {
+  background: var(--border-light);
+  border-radius: 999px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.insights-progress-fill {
+  background: var(--gradient-primary);
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
