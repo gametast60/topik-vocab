@@ -501,8 +501,8 @@ function startDueFlashcard(){
   fillIndex     = 0;
   dueStage      = 1;
   isDueMode     = true;
-  // ซ่อน fillCardUI เผื่อค้างจากรอบก่อน
-  const fillUI = document.getElementById("fillCardUI");
+  // ซ่อน fillStackWrapper เผื่อค้างจากรอบก่อน
+  const fillUI = document.getElementById("fillStackWrapper") || document.getElementById("fillCardUI");
   if(fillUI) fillUI.classList.add("hidden");
   goTo("flashcardGame");
   showFlashcard();

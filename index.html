@@ -274,15 +274,19 @@
         </div>
       </div>
 
-      <!-- ด่าน 2: Fill Blank UI -->
-      <div id="fillCardUI" class="hidden">
-        <div class="fc-meaning" id="fillMeaning"></div>
-        <div class="result" id="fillResult"></div>
-        <div class="answer-input-wrap">
-          <input type="text" id="fillInput" placeholder="พิมพ์คำศัพท์เกาหลี" onkeydown="handleFillEnter(event)">
-          <button class="clear-answer-btn hidden" id="fillClearBtn" onclick="clearFillInput()">✕</button>
+      <!-- ด่าน 2: Fill Blank UI with Constellation card-stack depth effect -->
+      <div id="fillStackWrapper" class="fc-stack-wrapper fill-stack-wrapper hidden">
+        <div class="fc-stack-ghost fc-stack-ghost-2"></div>
+        <div class="fc-stack-ghost fc-stack-ghost-1"></div>
+        <div id="fillCardUI">
+          <div class="fc-meaning" id="fillMeaning"></div>
+          <div class="result" id="fillResult"></div>
+          <div class="answer-input-wrap">
+            <input type="text" id="fillInput" placeholder="พิมพ์คำศัพท์เกาหลี" onkeydown="handleFillEnter(event)">
+            <button class="clear-answer-btn hidden" id="fillClearBtn" onclick="clearFillInput()">✕</button>
+          </div>
+          <button id="fillCheckBtn" class="check-answer-btn" onclick="checkFillAnswer()">ตรวจคำตอบ</button>
         </div>
-        <button id="fillCheckBtn" class="check-answer-btn" onclick="checkFillAnswer()">ตรวจคำตอบ</button>
       </div>
     </div>
 

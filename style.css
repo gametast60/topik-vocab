@@ -988,12 +988,14 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
 
 /* ─── STAGE 2: FILL BLANK & TYPING GAME ─── */
 #fillCardUI {
-  background: linear-gradient(135deg, #303030, #252525);
+  background: linear-gradient(135deg, #261F33, #1E1929);
   border-radius: 24px;
   padding: 24px;
   border: 1px solid var(--border-light);
   box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.4);
-  margin-top: 16px;
+  margin: 0;
+  position: relative;
+  z-index: 3;
 }
 
 #fillCardUI .fc-meaning {
@@ -2716,6 +2718,15 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   transform: translateX(-50%);
   opacity: 0.25;
   z-index: 1;
+}
+
+.fill-stack-wrapper {
+  height: auto;
+  min-height: 200px;
+}
+
+.fill-stack-wrapper .fc-stack-ghost {
+  border-radius: 24px;
 }
 
 /* ============================================================

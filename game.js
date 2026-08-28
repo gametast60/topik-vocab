@@ -75,11 +75,17 @@ function showFlashcard(){
   
   const inner = document.getElementById("flashcardInner");
   if(inner) inner.classList.remove("flipped");
+
+  const stackWrapper = document.querySelector(".fc-stack-wrapper:not(.fill-stack-wrapper)");
+  if(stackWrapper) stackWrapper.classList.remove("hidden");
+
   const container = document.getElementById("flashcardContainer");
   if(container) {
     container.className = "";
     container.classList.remove("hidden");
   }
+
+  document.getElementById("fillStackWrapper")?.classList.add("hidden");
 
   document.getElementById("fcWord").textContent = currentWord.word;
   document.getElementById("fcWordBack").textContent = currentWord.word;
@@ -228,10 +234,12 @@ function showFillCard(){
   badge.classList.add("stage2");
   badge.classList.remove("hidden");
 
-  // ใช้ fillCardUI แทน 3D Card
+  // ใช้ fillStackWrapper ของด่าน 2 แทน 3D Card ของด่าน 1
+  const stackWrapper = document.querySelector(".fc-stack-wrapper:not(.fill-stack-wrapper)");
+  if(stackWrapper) stackWrapper.classList.add("hidden");
   const container = document.getElementById("flashcardContainer");
   if(container) container.classList.add("hidden");
-  document.getElementById("fillCardUI").classList.remove("hidden");
+  document.getElementById("fillStackWrapper")?.classList.remove("hidden");
 
   document.getElementById("fillMeaning").textContent = word.meaning;
   document.getElementById("fillInput").value = "";
@@ -345,9 +353,10 @@ function stopFlashcard(){
 
   // ปิด popup ด่าน 2 ถ้าเปิดอยู่
   document.getElementById("stage2Popup")?.classList.add("hidden");
-  // ซ่อน 3D Card และ fillCardUI
+  // ซ่อน 3D Card (ทั้ง wrapper และ container) และ fillStackWrapper
+  document.querySelector(".fc-stack-wrapper:not(.fill-stack-wrapper)")?.classList.add("hidden");
   document.getElementById("flashcardContainer")?.classList.add("hidden");
-  document.getElementById("fillCardUI")?.classList.add("hidden");
+  document.getElementById("fillStackWrapper")?.classList.add("hidden");
   dueStage = 1;
 
   // แสดงสรุปแทน goBack
