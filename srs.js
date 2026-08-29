@@ -405,11 +405,11 @@ function recordAnswer(word, correct) {
   if (item.box === 5) {
     // กล่อง 5: ระบบทวนระยะยาว
     if (correct) {
-      item.ease       = Math.min(EASE_MAX, currentEase + EASE_INCREMENT);
+      item.ease       = Math.round(Math.min(EASE_MAX, currentEase + EASE_INCREMENT) * 10) / 10;
       item.box        = 5;
       item.nextReview = addDays(today, Math.max(1, Math.round(BOX5_INTERVAL * item.ease))); // คงกล่อง 5, ปรับ interval ตาม ease
     } else {
-      item.ease       = Math.max(EASE_MIN, currentEase - EASE_DECREMENT);
+      item.ease       = Math.round(Math.max(EASE_MIN, currentEase - EASE_DECREMENT) * 10) / 10;
       item.box        = Math.max(1, item.box - 2);
       item.nextReview = addDays(today, 1);             // ถอยหลัง 2 กล่อง (ไม่ต่ำกว่า 1), พรุ่งนี้ — ไม่คูณ ease เพราะเป็นบทลงโทษทันที
       item.lapses     = (item.lapses || 0) + 1;
@@ -419,7 +419,7 @@ function recordAnswer(word, correct) {
   } else {
     // กล่อง 0-4: SRS ปกติ
     if (correct) {
-      item.ease = Math.min(EASE_MAX, currentEase + EASE_INCREMENT);
+      item.ease = Math.round(Math.min(EASE_MAX, currentEase + EASE_INCREMENT) * 10) / 10;
       item.box  = Math.min(item.box + 1, 5);
       if (item.box === 5) {
         // เพิ่งเข้า box 5 (จาก box 4) → ใช้ interval 30 วัน ปรับตาม ease
@@ -428,7 +428,7 @@ function recordAnswer(word, correct) {
         item.nextReview = addDays(today, Math.max(1, Math.round(BOX_INTERVALS[item.box] * item.ease)));
       }
     } else {
-      item.ease       = Math.max(EASE_MIN, currentEase - EASE_DECREMENT);
+      item.ease       = Math.round(Math.max(EASE_MIN, currentEase - EASE_DECREMENT) * 10) / 10;
       item.box        = Math.max(1, item.box - 2);
       item.nextReview = addDays(today, 1);   // ไม่คูณ ease เพราะเป็นบทลงโทษทันที (เหมือน box 5)
       item.lapses     = (item.lapses || 0) + 1;
