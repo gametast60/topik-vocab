@@ -5,6 +5,11 @@ const BOX5_CHUNK_SIZE = 30;   // คำ/วัน จากกล่อง 5
 const BOX5_INTERVAL   = 30;   // วันก่อนทวนซ้ำหลังตอบถูก
 const TOMORROW_WARNING_THRESHOLD = 90;   // เกณฑ์แจ้งเตือนภาระการทวนของวันพรุ่งนี้ (Soft Limit)
 const LEECH_THRESHOLD = 5;   // ตอบผิดสะสมกี่ครั้งถึงนับเป็น leech (คำยากที่วนซ้ำ)
+const EASE_DEFAULT   = 1.0;  // ค่าเริ่มต้นของทุกคำ (ไม่ง่ายไม่ยาก)
+const EASE_MIN       = 0.5;  // ต่ำสุด — คำยากสุดจะ due เร็วกว่าปกติ 2 เท่า
+const EASE_MAX       = 2.0;  // สูงสุด — คำง่ายสุดจะ due ช้ากว่าปกติ 2 เท่า
+const EASE_INCREMENT = 0.1;  // ตอบถูก 1 ครั้ง เพิ่มเท่านี้
+const EASE_DECREMENT = 0.2;  // ตอบผิด 1 ครั้ง ลดเท่านี้ (แรงกว่าตอนเพิ่ม โดยตั้งใจ)
 
 
 // key สำหรับ settings แยกตาม topik
@@ -261,7 +266,7 @@ function initAllVocab() {
   // 1. เพิ่มคำศัพท์ใหม่ หรืออัปเดตความหมายใหม่โดยไม่มีการลบคำเก่าอัติโนมัติ
   vocab.forEach(item => {
     if (!data[item.word]) {
-      data[item.word] = { word: item.word, meaning: item.meaning, box: 0, nextReview: null, lapses: 0 };
+      data[item.word] = { word: item.word, meaning: item.meaning, box: 0, nextReview: null, lapses: 0, ease: EASE_DEFAULT };
       changed = true;
     } else if (data[item.word].meaning !== item.meaning) {
       data[item.word].meaning = item.meaning;
@@ -392,14 +397,21 @@ function recordAnswer(word, correct) {
   const item  = data[word];
   if (!item) return;
 
+  // สำคัญ: ต้องมี fallback (item.ease || EASE_DEFAULT) เสมอ
+  // เพราะคำเก่าที่สร้างก่อนฟีเจอร์นี้จะไม่มี field ease เลย (undefined)
+  // ถ้าลืม fallback ตรงนี้ ค่าจะกลายเป็น NaN แล้วไหลเข้า nextReview แบบเงียบๆ โดยไม่ error
+  const currentEase = item.ease || EASE_DEFAULT;
+
   if (item.box === 5) {
     // กล่อง 5: ระบบทวนระยะยาว
     if (correct) {
+      item.ease       = Math.min(EASE_MAX, currentEase + EASE_INCREMENT);
       item.box        = 5;
-      item.nextReview = addDays(today, BOX5_INTERVAL); // คงกล่อง 5, +30 วัน
+      item.nextReview = addDays(today, Math.max(1, Math.round(BOX5_INTERVAL * item.ease))); // คงกล่อง 5, ปรับ interval ตาม ease
     } else {
+      item.ease       = Math.max(EASE_MIN, currentEase - EASE_DECREMENT);
       item.box        = Math.max(1, item.box - 2);
-      item.nextReview = addDays(today, 1);             // ถอยหลัง 2 กล่อง (ไม่ต่ำกว่า 1), พรุ่งนี้
+      item.nextReview = addDays(today, 1);             // ถอยหลัง 2 กล่อง (ไม่ต่ำกว่า 1), พรุ่งนี้ — ไม่คูณ ease เพราะเป็นบทลงโทษทันที
       item.lapses     = (item.lapses || 0) + 1;
     }
     // เคลียร์ค่าที่ยืมมาทวนออกเสมอเมื่อตอบแล้ว
@@ -407,16 +419,18 @@ function recordAnswer(word, correct) {
   } else {
     // กล่อง 0-4: SRS ปกติ
     if (correct) {
-      item.box = Math.min(item.box + 1, 5);
+      item.ease = Math.min(EASE_MAX, currentEase + EASE_INCREMENT);
+      item.box  = Math.min(item.box + 1, 5);
       if (item.box === 5) {
-        // เพิ่งเข้า box 5 (จาก box 4) → ใช้ interval 30 วัน
-        item.nextReview = addDays(today, BOX5_INTERVAL);
+        // เพิ่งเข้า box 5 (จาก box 4) → ใช้ interval 30 วัน ปรับตาม ease
+        item.nextReview = addDays(today, Math.max(1, Math.round(BOX5_INTERVAL * item.ease)));
       } else {
-        item.nextReview = addDays(today, BOX_INTERVALS[item.box]);
+        item.nextReview = addDays(today, Math.max(1, Math.round(BOX_INTERVALS[item.box] * item.ease)));
       }
     } else {
+      item.ease       = Math.max(EASE_MIN, currentEase - EASE_DECREMENT);
       item.box        = Math.max(1, item.box - 2);
-      item.nextReview = addDays(today, 1);
+      item.nextReview = addDays(today, 1);   // ไม่คูณ ease เพราะเป็นบทลงโทษทันที (เหมือน box 5)
       item.lapses     = (item.lapses || 0) + 1;
     }
     // เคลียร์ borrowedFor เผื่อหลุดย้ายกล่อง
