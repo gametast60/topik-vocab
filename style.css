@@ -1732,29 +1732,42 @@ div.search-word.level-en-b2 { color: #eb03f3 !important; }
   transform: scale(0.97);
 }
 
-.stat-chip-due {
-  background: linear-gradient(135deg, #8B5CF6, #A78BFA);
-  border: 1.5px solid #A78BFA;
+.stat-chip-leech {
+  background: linear-gradient(135deg, #ea580c, #f97316);
+  border: 1.5px solid #fb923c;
   color: #FFFFFF;
 }
-.stat-chip-due:hover {
-  border-color: var(--primary) !important;
-  box-shadow: 0 6px 14px -4px rgba(139, 92, 246, 0.5) !important;
+.stat-chip-leech:hover {
+  border-color: #fdba74 !important;
+  box-shadow: 0 6px 14px -4px rgba(234, 88, 12, 0.5) !important;
 }
-.stat-chip-due b {
+.stat-chip-leech b {
   color: #ffffff !important;
 }
 
 .stat-chip-tomorrow {
-  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
   border: 1.5px solid #38bdf8;
   color: #FFFFFF;
 }
 .stat-chip-tomorrow:hover {
-  border-color: #38bdf8 !important;
-  box-shadow: 0 6px 14px -4px rgba(14, 165, 233, 0.5) !important;
+  border-color: #7dd3fc !important;
+  box-shadow: 0 6px 14px -4px rgba(2, 132, 199, 0.5) !important;
 }
 .stat-chip-tomorrow b {
+  color: #ffffff !important;
+}
+
+.stat-chip-due {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border: 1.5px solid #c084fc;
+  color: #FFFFFF;
+}
+.stat-chip-due:hover {
+  border-color: #e9d5ff !important;
+  box-shadow: 0 6px 14px -4px rgba(124, 58, 237, 0.5) !important;
+}
+.stat-chip-due b {
   color: #ffffff !important;
 }
 

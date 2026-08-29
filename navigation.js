@@ -886,6 +886,7 @@ function openSRSStats(){
   const label = currentTopik === "topik1" ? "TOPIK 1" : "TOPIK 2";
   const wb    = getWrongBoxWords();
   const tomorrowDue = getTomorrowDueCount();
+  const leechWords = getLeechWords();
 
   document.getElementById("srsStatsContent").innerHTML = `
     <div class="stats-header">📊 สถิติ ${label}</div>
@@ -893,9 +894,10 @@ function openSRSStats(){
       <div class="stat-chip">คำทั้งหมด<br><b>${stats.total}</b></div>
       <div class="stat-chip">เรียนไปแล้ว<br><b>${stats.learned}</b></div>
       <div class="stat-chip">จำได้แล้ว ✅<br><b>${stats.mastered}</b></div>
-      <div class="stat-chip stat-chip-due" style="cursor:pointer" onclick="openDueTodayInspector()">ทวนวันนี้<br><b>${stats.dueToday}</b></div>
-      <div class="stat-chip stat-chip-tomorrow" style="cursor:pointer" onclick="openTomorrowDueInspector()">ทวนพรุ่งนี้<br><b>${tomorrowDue}</b></div>
       <div class="stat-chip">❌คำผิดวันนี้<br><b>${wb.length}/${WRONG_BOX_MAX}</b></div>
+      <div class="stat-chip stat-chip-leech" style="cursor:pointer" onclick="openLeechInspector()">🔥คำยาก<br><b>${leechWords.length}</b></div>
+      <div class="stat-chip stat-chip-tomorrow" style="cursor:pointer" onclick="openTomorrowDueInspector()">ทวนพรุ่งนี้<br><b>${tomorrowDue}</b></div>
+      <div class="stat-chip stat-chip-due" style="cursor:pointer" onclick="openDueTodayInspector()">ทวนวันนี้<br><b>${stats.dueToday}</b></div>
     </div>
     <div class="stat-progress-label">ความคืบหน้า ${pct}%</div>
     <div class="stat-progress-bar">
@@ -1744,6 +1746,32 @@ function openWrongBoxInspector(){
   }
   document.getElementById("boxInspectorTitle").textContent = `กล่องคำผิด (${words.length} คำ)`;
   document.getElementById("boxInspectorTitle").style.color = "#db2777";
+  document.getElementById("boxInspectorList").innerHTML = listHtml;
+  document.getElementById("boxInspectorModal").classList.remove("hidden");
+}
+
+function openLeechInspector(){
+  // คำที่ตอบผิดสะสม >= LEECH_THRESHOLD ครั้ง (ดู getLeechWords() ใน srs.js)
+  // เรียงจากตอบผิดเยอะสุดไปน้อยสุด เพื่อให้เห็นคำที่ยากที่สุดก่อน
+  const words = getLeechWords()
+    .sort((a, b) => (b.lapses || 0) - (a.lapses || 0));
+
+  let listHtml = "";
+  if(words.length === 0){
+    listHtml = `<div class="box-inspector-empty">ยังไม่มีคำยาก 🎉 (ต้องตอบผิดสะสม ${LEECH_THRESHOLD} ครั้งขึ้นไปถึงจะนับ)</div>`;
+  } else {
+    words.forEach((item, i) => {
+      listHtml += `<div class="box-inspector-item">
+        <span class="box-inspector-num">${i+1}.</span>
+        <span class="box-inspector-word">${item.word}</span>
+        <span class="box-inspector-meaning">${item.meaning}</span>
+        <span class="box-inspector-date">ผิด ${item.lapses} ครั้ง</span>
+      </div>`;
+    });
+  }
+
+  document.getElementById("boxInspectorTitle").textContent = `🔥 คำยาก (${words.length} คำ)`;
+  document.getElementById("boxInspectorTitle").style.color = "#f97316";
   document.getElementById("boxInspectorList").innerHTML = listHtml;
   document.getElementById("boxInspectorModal").classList.remove("hidden");
 }
