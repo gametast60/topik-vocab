@@ -1,9 +1,10 @@
 
 const SRS_DATE      = "topik_srs_date";
-const BOX_INTERVALS  = [0, 1, 3, 7, 14, Infinity];
+const BOX_INTERVALS  = [0, 1, 3, 7, 14];   // index 5 (box 5) ไม่ใช้ค่านี้ ใช้ BOX5_INTERVAL แทนเสมอ ดู recordAnswer()
 const BOX5_CHUNK_SIZE = 30;   // คำ/วัน จากกล่อง 5
 const BOX5_INTERVAL   = 30;   // วันก่อนทวนซ้ำหลังตอบถูก
 const TOMORROW_WARNING_THRESHOLD = 90;   // เกณฑ์แจ้งเตือนภาระการทวนของวันพรุ่งนี้ (Soft Limit)
+const LEECH_THRESHOLD = 5;   // ตอบผิดสะสมกี่ครั้งถึงนับเป็น leech (คำยากที่วนซ้ำ)
 
 
 // key สำหรับ settings แยกตาม topik
@@ -260,7 +261,7 @@ function initAllVocab() {
   // 1. เพิ่มคำศัพท์ใหม่ หรืออัปเดตความหมายใหม่โดยไม่มีการลบคำเก่าอัติโนมัติ
   vocab.forEach(item => {
     if (!data[item.word]) {
-      data[item.word] = { word: item.word, meaning: item.meaning, box: 0, nextReview: null };
+      data[item.word] = { word: item.word, meaning: item.meaning, box: 0, nextReview: null, lapses: 0 };
       changed = true;
     } else if (data[item.word].meaning !== item.meaning) {
       data[item.word].meaning = item.meaning;
@@ -360,8 +361,16 @@ function getDueChunk() {
 
   const newWords = all.filter(item => item.box === 0);
 
-  // ① slice due ตาม limit (restore พฤติกรรมเดิม: Due > limit → แบ่งเป็นหลายชุด)
-  const dueChunk = shuffleArray(due).slice(0, limit);
+  // ① slice due ตาม limit (เรียงตาม nextReview เก่าสุดไปใหม่สุด ภายในกลุ่มวันเดียวกันสุ่มลำดับกันเอง)
+  const dueGroups = {};
+  due.forEach(item => {
+    const key = item.nextReview || "unknown";
+    if (!dueGroups[key]) dueGroups[key] = [];
+    dueGroups[key].push(item);
+  });
+  const sortedDueKeys = Object.keys(dueGroups).sort((a, b) => a.localeCompare(b));
+  const sortedDue = sortedDueKeys.flatMap(key => shuffleArray(dueGroups[key]));
+  const dueChunk = sortedDue.slice(0, limit);
 
   // ② คำนวณโควตา Box0 จากช่องที่เหลือหลัง due และตรวจ Tomorrow Due
   const spaceLeft = limit - dueChunk.length;
@@ -389,8 +398,9 @@ function recordAnswer(word, correct) {
       item.box        = 5;
       item.nextReview = addDays(today, BOX5_INTERVAL); // คงกล่อง 5, +30 วัน
     } else {
-      item.box        = 1;
-      item.nextReview = addDays(today, 1);             // กลับกล่อง 1, พรุ่งนี้
+      item.box        = Math.max(1, item.box - 2);
+      item.nextReview = addDays(today, 1);             // ถอยหลัง 2 กล่อง (ไม่ต่ำกว่า 1), พรุ่งนี้
+      item.lapses     = (item.lapses || 0) + 1;
     }
     // เคลียร์ค่าที่ยืมมาทวนออกเสมอเมื่อตอบแล้ว
     if (item.borrowedFor) delete item.borrowedFor;
@@ -405,8 +415,9 @@ function recordAnswer(word, correct) {
         item.nextReview = addDays(today, BOX_INTERVALS[item.box]);
       }
     } else {
-      item.box        = 1;
+      item.box        = Math.max(1, item.box - 2);
       item.nextReview = addDays(today, 1);
+      item.lapses     = (item.lapses || 0) + 1;
     }
     // เคลียร์ borrowedFor เผื่อหลุดย้ายกล่อง
     if (item.borrowedFor) delete item.borrowedFor;
@@ -446,4 +457,10 @@ function getSRSStats() {
     dueToday,
     newLeft
   };
+}
+
+// คำที่ตอบผิดสะสมเกิน threshold — คำยากที่ควรให้ผู้ใช้สนใจเป็นพิเศษ
+function getLeechWords() {
+  const data = loadSRS();
+  return Object.values(data).filter(item => (item.lapses || 0) >= LEECH_THRESHOLD);
 }
